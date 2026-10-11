@@ -288,7 +288,7 @@ header {
 }
 
 /* ================= PRODUCTS SECTION ================= */
-.products {
+#products {
     padding: 20px 0;
 }
 
@@ -456,4 +456,112 @@ header {
 .product-price-cart .add-cart::after {
     width: 2px;
     height: 12px;
+}
+
+/* ================= LIGHT STACKED FOOTER ================= */
+footer {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 20px;
+    background-color: #ffffff;
+    padding: 32px 40px;
+    border-radius: 20px;
+    margin-top: 60px;
+    border: 1px solid #f1f5f9;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03);
+}
+
+/* Part 1: Section Title */
+.footer-title h1 {
+    font-size: 24px;
+    font-weight: 800;
+    color: #0f172a;
+    position: relative;
+    padding-left: 14px;
+}
+
+.footer-title h1::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 4px;
+    height: 75%;
+    background-color: #2563eb;
+    border-radius: 4px;
+}
+
+/* Part 2: Social Media & Contact Links (Line by Line) */
+.social-media ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    list-style: none;
+    width: 100%;
+}
+
+.social-media li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 15px;
+    font-weight: 600;
+    color: #64748b;
+    background-color: #f8fafc;
+    padding: 12px 20px;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    transition: all 0.2s ease;
+}
+
+.social-media li:hover {
+    background-color: #f1f5f9;
+    border-color: #cbd5e1;
+}
+
+.social-media svg {
+    width: 18px;
+    height: 18px;
+    fill: #2563eb;
+    flex-shrink: 0;
+}
+
+.social-media a {
+    color: #0f172a;
+    text-decoration: none;
+    font-weight: 700;
+    transition: color 0.2s ease;
+}
+
+.social-media a:hover {
+    color: #2563eb;
+}
+
+/* Part 3: Location Link */
+.location a {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 15px;
+    font-weight: 700;
+    color: #2563eb;
+    background-color: #eff6ff;
+    padding: 12px 20px;
+    border-radius: 12px;
+    border: 1px solid #bfdbfe;
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+.location svg {
+    width: 18px;
+    height: 18px;
+    fill: #2563eb;
+    flex-shrink: 0;
+}
+
+.location a:hover {
+    background-color: #dbeafe;
 }
