@@ -39,14 +39,14 @@ const products = [
         category: "Planşet",
         name: "iPad Air",
         price: 1250,
-        inStock: false
+        inStock: true
     },
     {
         id: 7,
         category: "Qulaqlıq",
         name: "AAirPods Max 2",
         price: 1100,
-        inStock: true
+        inStock: false
     },
     {
         id: 8,
@@ -61,7 +61,7 @@ const products = [
 document.addEventListener('DOMContentLoaded', () => {
     let cart = [];
 
-    // DOM Elements
+    // DOM Elementləri
     const cartButtonHeader = document.querySelector('header .button button');
     const cartSidebar = document.getElementById('cartSidebar');
     const cartOverlay = document.getElementById('cartOverlay');
@@ -69,9 +69,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const cartItemsContainer = document.getElementById('cartItemsContainer');
     const cartTotalPrice = document.getElementById('cartTotalPrice');
     const cartBadgeCount = document.getElementById('cartBadgeCount');
-    const addCartBtns = document.querySelectorAll('.add-cart');
+    const cardElements = document.querySelectorAll('.products-cards .card');
 
-    // Open & Close Sidebar Handlers
+    // Panel Açma / Bağlama
     const openCart = () => {
         cartSidebar.classList.add('open');
         cartOverlay.classList.add('active');
@@ -86,39 +86,68 @@ document.addEventListener('DOMContentLoaded', () => {
     closeCartBtn.addEventListener('click', closeCart);
     cartOverlay.addEventListener('click', closeCart);
 
-    // Add Product to Cart
-    addCartBtns.forEach((btn) => {
-        btn.addEventListener('click', (e) => {
-            const card = e.target.closest('.card');
-            const title = card.querySelector('.product-name h3').innerText;
-            const priceText = card.querySelector('.product-price-cart p').innerText;
-            const price = parseInt(priceText.replace(' AZN', ''));
-            const imageSrc = card.querySelector('.card-image img').src;
+    // 2. HTML-dəki Kartların Stok Vəziyyətini Massivlə Sinxronlaşdırmaq
+    cardElements.forEach((card, index) => {
+        const product = products[index];
+        const addBtn = card.querySelector('.add-cart');
 
-            // Add item object
-            cart.push({ id: Date.now(), title, price, imageSrc });
-            renderCart();
-            openCart();
-        });
+        if (product && !product.inStock) {
+            card.classList.add('out-of-stock');
+            
+            const imageBox = card.querySelector('.card-image');
+            if (imageBox && !imageBox.querySelector('.stock-overlay')) {
+                imageBox.insertAdjacentHTML('beforeend', '<div class="stock-overlay">TÜKƏNİB</div>');
+            }
+
+            if (addBtn) {
+                addBtn.disabled = true;
+                addBtn.style.backgroundColor = '#cbd5e1';
+            }
+        }
+
+        // Klik Hadisəsi 
+        if (addBtn && product && product.inStock) {
+            addBtn.addEventListener('click', () => {
+                addToCart(product, card);
+            });
+        }
     });
 
-    // Render Cart Content
+    // 3. Səbətə Əlavə Etmə
+    function addToCart(product, card) {
+        const imageSrc = card.querySelector('.card-image img').src;
+        const existingItem = cart.find(item => item.id === product.id);
+
+        if (existingItem) {
+            existingItem.quantity += 1;
+        } else {
+            cart.push({ ...product, imageSrc, quantity: 1 });
+        }
+
+        renderCart();
+        openCart();
+    }
+
+    // 4. Səbəti Yeniləmək (Render)
     function renderCart() {
         cartItemsContainer.innerHTML = '';
         let total = 0;
+        let totalCount = 0;
 
         if (cart.length === 0) {
             cartItemsContainer.innerHTML = `<p style="text-align:center; color:#94a3b8; margin-top:20px;">Səbətiniz boşdur</p>`;
         } else {
             cart.forEach((item) => {
-                total += item.price;
+                total += item.price * item.quantity;
+                totalCount += item.quantity;
+
                 const itemEl = document.createElement('div');
                 itemEl.classList.add('cart-item');
                 itemEl.innerHTML = `
-                    <img src="${item.imageSrc}" alt="${item.title}">
+                    <img src="${item.imageSrc}" alt="${item.name}">
                     <div class="cart-item-details">
-                        <h4>${item.title}</h4>
-                        <p>${item.price} AZN</p>
+                        <h4>${item.name}</h4>
+                        <p>${item.price} AZN ${item.quantity > 1 ? `x ${item.quantity}` : ''}</p>
                     </div>
                     <button class="remove-item-btn" data-id="${item.id}">&times;</button>
                 `;
@@ -126,12 +155,12 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
 
-        // Update Total & Badges
+        // Qiymətləri və sayğacları yeniləmək
         cartTotalPrice.innerText = `${total} AZN`;
-        cartBadgeCount.innerText = cart.length;
-        cartButtonHeader.innerText = `Səbət (${cart.length})`;
+        cartBadgeCount.innerText = totalCount;
+        cartButtonHeader.innerText = `Səbət (${totalCount})`;
 
-        // Remove item listeners
+        // Silmə Düymələrinə Klik Hadisəsi
         document.querySelectorAll('.remove-item-btn').forEach((btn) => {
             btn.addEventListener('click', (e) => {
                 const idToRem = parseInt(e.target.dataset.id);
